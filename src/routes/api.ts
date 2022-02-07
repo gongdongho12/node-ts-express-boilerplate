@@ -28,10 +28,11 @@ router.get("/", async (req, res) => {
 	const productList = await page.evaluate(() => {
 		return document.querySelector("ul#productList").innerHTML;
 	});
-	let html = await response.text();
-	let headers = await response.headers();
+	// let html = await response.text();
+	// let headers = await response.headers();
 	// console.log("html", html);
 	// console.log("headers", headers);
+	browser.close();
 	res.send(productList);
 });
 
@@ -56,6 +57,7 @@ router.get("/reviews", async (req, res) => {
       }
     }, { subRequestUrl: subURL }
 	);
+	browser.close();
 	res.send(resultBody);
 });
 
