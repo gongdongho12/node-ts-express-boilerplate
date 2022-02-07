@@ -31,6 +31,6 @@ app.use(handleError);
 // connection to server
 const port = process.env.PORT;
 
-app.listen(port, () => {
-  logger.info(`connected to port ${port}`);
+app.listen(Number(port), "0.0.0.0", () => {
+    logger.info(`Express web server started: http://0.0.0.0:${port}`);
 });

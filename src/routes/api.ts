@@ -24,8 +24,8 @@ router.get("/", async (req, res) => {
 	});
 	let html = await response.text();
 	let headers = await response.headers();
-	console.log("html", html);
-	console.log("headers", headers);
+	// console.log("html", html);
+	// console.log("headers", headers);
 	res.send(productList);
 });
 
