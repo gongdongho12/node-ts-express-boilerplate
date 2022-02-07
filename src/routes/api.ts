@@ -6,8 +6,12 @@ const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 import process from 'process';
 
-const CHROMIUM_PATH = process?.env?.CHROMIUM_PATH || undefined
-const PUPPETEER_ARGUMENTS = { headless: true, executablePath: CHROMIUM_PATH, args: ['--no-sandbox'] }
+const CHROMIUM_PATH = process.env.CHROMIUM_PATH
+const PUPPETEER_ARGUMENTS = { headless: true, executablePath: CHROMIUM_PATH, args: [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage'
+] }
 
 router.get("/", async (req, res) => {
 	const browser = await puppeteer.launch(PUPPETEER_ARGUMENTS);
