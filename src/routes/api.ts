@@ -39,26 +39,37 @@ router.get("/", async (req, res) => {
 router.get("/reviews", async (req, res) => {
 	const browser = await puppeteer.launch(PUPPETEER_ARGUMENTS);
 	const page = await browser.newPage();
-	await page.goto("https://www.coupang.com/vp/products/83362637", {
+	const productId: number = 83362637;
+
+	await page.goto(`https://www.coupang.com/vp/products/${productId}`, {
 		waitUntil: "networkidle0",
 	});
-	const subURL =
-		"https://www.coupang.com/vp/product/reviews?productId=83362637&page=1&size=30&sortBy=DATE_DESC&ratings=&q=&viRoleCode=3&ratingSummary=true";
-	const resultBody = await page.evaluate(({ subRequestUrl }) => {
-      console.log("subRequestUrl", subRequestUrl);
-      try {
-        const xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", subRequestUrl, false);
-        xmlHttp.send();
-        const responseText = xmlHttp.responseText;
-        return responseText;
-      } catch (error: any) {
-        return error.message;
-      }
-    }, { subRequestUrl: subURL }
-	);
+	const reviewPageUrlGenerator = (page: number) => {
+		return `https://www.coupang.com/vp/product/reviews?productId=${productId}&page=${page}&size=30&sortBy=DATE_DESC&ratings=&q=&viRoleCode=3&ratingSummary=true`;
+	}
+	const reviewRequestGenerator = (pageNumber: number) => {
+		const resultBody: Promise<string> = page.evaluate(
+			({ subRequestUrl }) => {
+				console.log("subRequestUrl", subRequestUrl);
+				try {
+					const xmlHttp = new XMLHttpRequest();
+					xmlHttp.open("GET", subRequestUrl, false);
+					xmlHttp.send();
+					const responseText = xmlHttp.responseText;
+					return responseText;
+				} catch (error: any) {
+					return error.message;
+				}
+			},
+			{ subRequestUrl: reviewPageUrlGenerator(pageNumber) }
+		);
+		return resultBody;
+	}
+	const pageNumberList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+	const reviewPagePromiseList = pageNumberList.map(reviewRequestGenerator);
+	const result: string[] = await Promise.all(reviewPagePromiseList)
 	browser.close();
-	res.send(resultBody);
+	res.send(result);
 });
 
 export default router;
