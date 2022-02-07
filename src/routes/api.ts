@@ -10,7 +10,9 @@ const CHROMIUM_PATH = process.env.CHROMIUM_PATH
 const PUPPETEER_ARGUMENTS = { headless: true, executablePath: CHROMIUM_PATH, args: [
   '--no-sandbox',
   '--disable-setuid-sandbox',
-  '--disable-dev-shm-usage'
+  '--disable-dev-shm-usage',
+  '--disable-gpu',
+  '--no-zygote'
 ] }
 
 router.get("/", async (req, res) => {
