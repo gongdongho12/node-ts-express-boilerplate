@@ -18,7 +18,7 @@ const app = express();
 // Basic middlewares
 app.use(morgan(morganConfig));
 app.use(helmet());
-app.use(cors(corsOptionsWhiteList));
+// app.use(cors(corsOptionsWhiteList));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
