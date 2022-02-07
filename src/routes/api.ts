@@ -67,9 +67,10 @@ router.get("/reviews", async (req, res) => {
 	}
 	const pageNumberList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 	const reviewPagePromiseList = pageNumberList.map(reviewRequestGenerator);
-	const result: string[] = await Promise.all(reviewPagePromiseList)
+	const resultReviewList: string[] = await Promise.all(reviewPagePromiseList)
+	const result = new Map(pageNumberList.map((pageNumber, i) => [reviewPageUrlGenerator(pageNumber), resultReviewList[i]]))
 	browser.close();
-	res.send(result);
+	res.send(Object.fromEntries(result));
 });
 
 export default router;
