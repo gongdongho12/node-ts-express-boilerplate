@@ -7,6 +7,7 @@ import { corsOptionsWhiteList, morganConfig } from './config/config';
 import logger from './config/logger.config';
 import { handleError, notFound } from './middleware/errorHandler';
 import baseRoutes from './routes';
+import process from 'process';
 
 // dotenv config
 dotenv.config();
@@ -31,6 +32,10 @@ app.use(handleError);
 // connection to server
 const port = process.env.PORT;
 
+// app.listen(port, () => {
+//     console.info(`Express web server started: ${port}`)
+// });
+
 app.listen(Number(port), "0.0.0.0", () => {
-    logger.info(`Express web server started: http://0.0.0.0:${port}`);
+    console.info(`Express web server started: http://0.0.0.0:${port}`);
 });
