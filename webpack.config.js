@@ -5,7 +5,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const tsConfigPath = path.resolve(__dirname, "./tsconfig.json")
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './index.ts',
   mode: 'production',
   devtool: 'source-map',
   target: 'node',
@@ -25,7 +25,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@src': path.resolve(__dirname, 'src/'),
+      '*': path.resolve(__dirname, 'src/')
     },
     plugins: [new TsconfigPathsPlugin({
       configFile: tsConfigPath

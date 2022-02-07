@@ -10,7 +10,6 @@ const CHROMIUM_PATH = process?.env?.CHROMIUM_PATH || undefined
 const PUPPETEER_ARGUMENTS = { headless: true, executablePath: CHROMIUM_PATH, args: ['--no-sandbox'] }
 
 router.get("/", async (req, res) => {
-  console.log("CHROMIUM_PATH", CHROMIUM_PATH)
 	const browser = await puppeteer.launch(PUPPETEER_ARGUMENTS);
 	const page = await browser.newPage();
 	const response = await page.goto(
