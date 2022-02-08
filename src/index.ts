@@ -66,45 +66,44 @@ const expressGenerator = (useCluster: boolean) => {
 	return app;
 };
 
-// if (workerCount >= 2) {
-// 	if (cluster.isPrimary) {
-// 		console.log(`Server ID: ${instanceId}`);
-// 		console.log(`Number of server's CPU: ${cpuCount}`);
-// 		console.log(`Number of workers to create: ${workerCount}`);
-// 		console.log(`Now create total ${workerCount} workers ...`);
+if (workerCount >= 2) {
+	if (cluster.isMaster) {
+		console.log(`Server ID: ${instanceId}`);
+		console.log(`Number of server's CPU: ${cpuCount}`);
+		console.log(`Number of workers to create: ${workerCount}`);
+		console.log(`Now create total ${workerCount} workers ...`);
 
-// 		// Message listener
-// 		const workerMsgListener = (msg: any) => {
-// 			const worker_id = msg.worker_id;
-// 			// Send master's id.
-// 			if (msg.cmd === "PRIMARY_ID") {
-// 				cluster.workers[worker_id].send({
-// 					cmd: "PRIMARY_ID",
-// 					primary_id: instanceId,
-// 				});
-// 			}
-// 		};
-// 		// Create workers
-// 		for (var i = 0; i < workerCount; i++) {
-// 			const worker = cluster.fork();
-// 			console.log(`Worker is created. [${i + 1}/${workerCount}]`);
-// 			worker.on("message", workerMsgListener);
-// 		}
-// 		// Worker is now online.
-// 		cluster.on("online", (worker) => {
-// 			console.log(`Worker is now online: ${worker.process.pid}`);
-// 		});
-// 		// Re-create dead worker.
-// 		cluster.on("exit", (deadWorker) => {
-// 			console.log(`Worker is dead: ${deadWorker.process.pid}`);
-// 			const worker = cluster.fork();
-// 			console.log(`New worker is created.`);
-// 			worker.on("message", workerMsgListener);
-// 		});
-// 	} else if (cluster.isWorker) {
-// 		expressGenerator(true);
-// 	}
-// } else {
-// 	expressGenerator(false);
-// }
-expressGenerator(false);
+		// Message listener
+		const workerMsgListener = (msg: any) => {
+			const worker_id = msg.worker_id;
+			// Send master's id.
+			if (msg.cmd === "PRIMARY_ID") {
+				cluster.workers[worker_id].send({
+					cmd: "PRIMARY_ID",
+					primary_id: instanceId,
+				});
+			}
+		};
+		// Create workers
+		for (var i = 0; i < workerCount; i++) {
+			const worker = cluster.fork();
+			console.log(`Worker is created. [${i + 1}/${workerCount}]`);
+			worker.on("message", workerMsgListener);
+		}
+		// Worker is now online.
+		cluster.on("online", (worker) => {
+			console.log(`Worker is now online: ${worker.process.pid}`);
+		});
+		// Re-create dead worker.
+		cluster.on("exit", (deadWorker) => {
+			console.log(`Worker is dead: ${deadWorker.process.pid}`);
+			const worker = cluster.fork();
+			console.log(`New worker is created.`);
+			worker.on("message", workerMsgListener);
+		});
+	} else if (cluster.isWorker) {
+		expressGenerator(true);
+	}
+} else {
+	expressGenerator(false);
+}
