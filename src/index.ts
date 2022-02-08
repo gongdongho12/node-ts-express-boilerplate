@@ -22,6 +22,7 @@ const instanceId = v4();
 const expressGenerator = (useCluster: boolean) => {
 	// express app
 	const app = express();
+	app.use(express.static('public'));
 
 	// Basic middlewares
 	app.use(morgan(morganConfig));
