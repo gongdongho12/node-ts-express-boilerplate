@@ -50,7 +50,8 @@ export const puppeteerBodyParser = async (requestData: IPuppeteerBody): Promise<
           if (selector != undefined) {
 						const container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = html;
-						return document.querySelector(selector).innerHTML;
+						const parseData = container.querySelector(selector).innerHTML;
+            return parseData;
 					} else {
 						return html;
 					}
