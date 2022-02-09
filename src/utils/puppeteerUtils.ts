@@ -34,9 +34,7 @@ export const puppeteerBodyParser = async (requestData: IPuppeteerBody): Promise<
   }
   if (children.length > 0) {
     const childPromiseList = children.map(async (child: IPuppeteerSelector) => {
-      let { url, method = "GET", body, selector, func } = child
-      result.push([url])
-
+      const { func, ...rest } = child
       /*
         별도로 함수도 지정해서 파라미터를 업데이트 할 수 있도록 func 로직 추가
         url을 공백으로 전달하고 함수를 통해 url 을 업데이트해서 마지막 페이지로 업데이트 할 수 있도록
@@ -47,12 +45,21 @@ export const puppeteerBodyParser = async (requestData: IPuppeteerBody): Promise<
         }, { func })
         if (typeof newFunc == "string") {
           try {
-            (new Function(newFunc))();
+            const resultUpdater = new Function(
+							"url, method, body, selector",
+							newFunc
+						)(rest.url, rest.method, rest.body, rest.selector);
+            Object.keys(resultUpdater).forEach(key => {
+              // @ts-ignore
+              child?.[key] = resultUpdater[key];
+            });
           } catch (e: any) {
             console.error("function run err", e)
           }
         }
       }
+      const { url, method = "GET", body, selector } = child
+      result.push([url])
 
       const childPromise: Promise<string> = page.evaluate(({ url, method, selector, body }) => {
         try {
