@@ -5,6 +5,7 @@ interface IPuppeteerSelector {
   method?: Method;
   body?: any;
   selector?: string;
+  func?: string;
 }
 
 interface IPuppeteerBody extends IPuppeteerSelector {
