@@ -54,12 +54,13 @@ const expressGenerator = (useCluster: boolean) => {
 	app.use(handleError);
 
 	// connection to server
-	const port = process.env.PORT;
+	const port = process.env.PORT || 3000;
 
 	// app.listen(port, () => {
 	//     console.info(`Express web server started: ${port}`)
 	// });
 
+	console.log("port", port)
 	app.listen(Number(port), "0.0.0.0", () => {
 		console.info(`Express web server started: http://0.0.0.0:${port}`);
 	});
@@ -107,3 +108,4 @@ if (workerCount >= 2) {
 } else {
 	expressGenerator(false);
 }
+
