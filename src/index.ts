@@ -11,9 +11,6 @@ import logger from "./config/logger.config";
 import { handleError, notFound } from "./middleware/errorHandler";
 import baseRoutes from "./routes";
 import process from "process";
-// @ts-ignore
-import WhatapAgent from 'whatap';
-WhatapAgent.NodeAgent;
 
 const cpuCount = os.cpus().length;
 const workerCount = cpuCount / 2;
