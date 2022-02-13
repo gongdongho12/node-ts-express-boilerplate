@@ -20,11 +20,34 @@ const PUPPETEER_ARGUMENTS = {
 export const getBrowser = () => puppeteer.launch(PUPPETEER_ARGUMENTS)
 
 export const puppeteerBodyParser = async (requestData: IPuppeteerBody): Promise<Map<string, string>> => {
-  const { url, selector, children = [] } = requestData
+  const { func, children = [], ...share } = requestData
+  const { url, selector } = share
   const browser = await getBrowser();
   const page = await browser.newPage().then((page) => page.goto(url, { waitUntil: "networkidle0" }).then(() => page));
   const result: Array<string[]> = []
   const promiseArr: Array<Promise<string>> = []
+
+  if (func != undefined) {
+    const newFunc: string = await page.evaluate(({ func }) => {
+      return (new Function(func))();
+    }, { func })
+    if (typeof newFunc == "string") {
+      try {
+        const resultUpdater = new Function(
+          "rest",
+          newFunc
+        )(share);
+
+        Object.keys(resultUpdater).forEach(key => {
+          // @ts-ignore
+          share?.[key] = resultUpdater[key];
+        });
+      } catch (e: any) {
+        console.error("function run err", e)
+      }
+    }
+  }
+
   if (selector != undefined) {
     const mainPromise: Promise<string> = page.evaluate(({ selector }) => {
       return document.querySelector(selector).innerHTML;
@@ -34,21 +57,23 @@ export const puppeteerBodyParser = async (requestData: IPuppeteerBody): Promise<
   }
   if (children.length > 0) {
     const childPromiseList = children.map(async (child: IPuppeteerSelector) => {
-      const { func, ...rest } = child
+      const { func, ...restTemp } = child
+      const rest = { ...share, ...restTemp }
+      
       /*
         별도로 함수도 지정해서 파라미터를 업데이트 할 수 있도록 func 로직 추가
         url을 공백으로 전달하고 함수를 통해 url 을 업데이트해서 마지막 페이지로 업데이트 할 수 있도록
       */
       if (func != undefined) {
-        const newFunc: string = await page.evaluate(({ func }) => {
-          return (new Function(func))();
-        }, { func })
+        const newFunc: string = await page.evaluate(({ func, rest }) => {
+          return (new Function('rest', func))(rest);
+        }, { func, rest })
         if (typeof newFunc == "string") {
           try {
             const resultUpdater = new Function(
-							"url, method, body, selector",
+							"rest",
 							newFunc
-						)(rest.url, rest.method, rest.body, rest.selector);
+						)(rest);
             Object.keys(resultUpdater).forEach(key => {
               // @ts-ignore
               child?.[key] = resultUpdater[key];
@@ -58,6 +83,7 @@ export const puppeteerBodyParser = async (requestData: IPuppeteerBody): Promise<
           }
         }
       }
+      // console.log("child", child)
       const { url, method = "GET", body, selector } = child
       result.push([url])
 
