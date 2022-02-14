@@ -108,10 +108,10 @@ export const puppeteerBodyParser = async (
 
 			if (innerFunc != undefined) {
         try {
-          console.log("rest", rest);
-          console.log("innerFunc", innerFunc);
+          // console.log("rest", rest);
+          // console.log("innerFunc", innerFunc);
 					const resultUpdater = new Function("rest", innerFunc)(rest);
-          console.log("resultUpdater", resultUpdater);
+          // console.log("resultUpdater", resultUpdater);
 					Object.keys(resultUpdater).forEach((key) => {
 						// @ts-ignore
 						child?.[key] = resultUpdater[key];

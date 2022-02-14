@@ -5,9 +5,17 @@ const router = Router();
 
 router.post("/", async (req, res) => {
 	const requestBodyList: IPuppeteerBody[] = req?.body;
-	const result: Array<{ [key: string]: string }> = await Promise.all(
-		requestBodyList.map((requestBody) => puppeteerBodyParser(requestBody))
-	).then((assignMap) => assignMap.map((result) => Object.fromEntries(result)));
+	const promiseList: Promise<any>[] = requestBodyList.map((requestBody) => puppeteerBodyParser(requestBody))
+	// const assignData: Array<{ [key: string]: string }> = []
+	// const result: Array<{ [key: string]: string }> = await (promiseList.reduce((promise: Promise<any>, next: Promise<any>) => {
+	// 	return promise.then((data: any) => {
+	// 		assignData.push(Object.fromEntries(data))
+	// 		return next
+	// 	})
+	// }, promiseList?.[0])
+	// 	.then(() => assignData))
+	const result: Array<{ [key: string]: string }> = await Promise.all(promiseList)
+		.then((assignMap) => assignMap.map((result) => Object.fromEntries(result)));
 	res.send(result);
 });
 
