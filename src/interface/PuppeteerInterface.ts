@@ -6,6 +6,7 @@ interface IPuppeteerSelector {
   body?: any;
   selector?: string;
   func?: string;
+  innerFunc?: string;
 }
 
 interface IPuppeteerBody extends IPuppeteerSelector {
