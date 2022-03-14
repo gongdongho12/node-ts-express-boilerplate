@@ -3,7 +3,7 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", (req, res) => {
-	res.send("Storelink Puppeteer API");
+	res.send("Sample API");
 });
 
 export default router;

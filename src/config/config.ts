@@ -1,6 +1,5 @@
 import { CorsOptions } from 'cors';
 import { Request, Response } from 'express';
-import logger from './logger.config';
 
 /* Cors Config  */
 const corsOptions: CorsOptions = {
@@ -46,6 +45,5 @@ export const morganConfig = (tokens: any, req: Request, res: Response) => {
     tokens['response-time'](req, res),
     'ms',
   ].join(' ');
-  logger.info(log);
   return log;
 };

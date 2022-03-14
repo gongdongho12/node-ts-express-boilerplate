@@ -1,7 +1,7 @@
 {
-  "name": "docker-pupeteer-crawler",
+  "name": "node-ts-express-boilerplate",
   "version": "1.0.0",
-  "description": "docker-pupeteer-crawler",
+  "description": "node-ts-express-boilerplate",
   "main": "webpack.config.js",
   "scripts": {
     "start": "node ./dist/index.js",
@@ -20,8 +20,6 @@
     "helmet": "^5.0.2",
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
-    "puppeteer-extra": "^3.2.3",
-    "puppeteer-extra-plugin-stealth": "^2.9.0",
     "uuid": "^8.3.2",
     "winston": "^3.5.1"
   },
@@ -41,7 +39,6 @@
     "nodemon": "^2.0.15",
     "nodemon-webpack-plugin": "^4.7.1",
     "prettier": "^2.5.1",
-    "puppeteer": "^13.2.0",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.12.0",

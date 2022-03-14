@@ -7,7 +7,6 @@ import { v4 } from "uuid";
 import helmet from "helmet";
 import morgan from "morgan";
 import { corsOptionsWhiteList, morganConfig } from "./config/config";
-import logger from "./config/logger.config";
 import { handleError, notFound } from "./middleware/errorHandler";
 import baseRoutes from "./routes";
 import process from "process";
@@ -18,6 +17,8 @@ const workerCount = cpuCount / 2;
 // dotenv config
 dotenv.config();
 const instanceId = v4();
+
+const PRIMARY_ID = "PRIMARY_ID";
 
 const expressGenerator = (useCluster: boolean) => {
 	// express app
@@ -35,9 +36,9 @@ const expressGenerator = (useCluster: boolean) => {
 		const worker_id = cluster.worker.id;
 		let primary_id = "";
 		// Request master's id to master.
-		process.send({ worker_id: worker_id, cmd: "PRIMARY_ID" });
+		process.send({ worker_id: worker_id, cmd: PRIMARY_ID });
 		process.on("message", (msg: any) => {
-			if (msg.cmd === "PRIMARY_ID") {
+			if (msg.cmd === PRIMARY_ID) {
 				primary_id = msg.primary_id;
 			}
 		});
@@ -55,10 +56,6 @@ const expressGenerator = (useCluster: boolean) => {
 
 	// connection to server
 	const port = process.env.PORT || 3000;
-
-	// app.listen(port, () => {
-	//     console.info(`Express web server started: ${port}`)
-	// });
 
 	console.log("port", port)
 	app.listen(Number(port), "0.0.0.0", () => {
@@ -78,9 +75,9 @@ if (workerCount >= 2) {
 		const workerMsgListener = (msg: any) => {
 			const worker_id = msg.worker_id;
 			// Send master's id.
-			if (msg.cmd === "PRIMARY_ID") {
+			if (msg.cmd === PRIMARY_ID) {
 				cluster.workers[worker_id].send({
-					cmd: "PRIMARY_ID",
+					cmd: PRIMARY_ID,
 					primary_id: instanceId,
 				});
 			}
